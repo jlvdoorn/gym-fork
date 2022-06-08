@@ -33,7 +33,7 @@ SIDE_ENGINE_POWER = 0.6
 
 INITIAL_RANDOM = 1000.0  # Set 1500 to make game harder
 
-LANDER_POLY = [(-14, +17), (-17, 0), (-17, -10), (+17, -10), (+17, 0), (+14, +17)]
+LANDER_POLY = [(-14, +17), (-17, 0), (-17, -10), (+17, -10), (+17, 0), (+14, +17)] ## TODO: Change to Falcon9 Polygon shape
 LEG_AWAY = 20
 LEG_DOWN = 18
 LEG_W, LEG_H = 2, 8
@@ -336,7 +336,7 @@ class LunarLander(gym.Env, EzPickle):
         self.moon.color2 = (0.0, 0.0, 0.0)
 
         initial_y = VIEWPORT_H / SCALE
-        self.lander = self.world.CreateDynamicBody(
+        self.lander = self.world.CreateDynamicBody( ## TODO: Edit Dynamics to new state-space system
             position=(VIEWPORT_W / SCALE / 2, initial_y),
             angle=0.0,
             fixtures=fixtureDef(
