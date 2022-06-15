@@ -11,6 +11,7 @@ from gym import error, spaces
 from gym.error import DependencyNotInstalled
 from gym.utils import EzPickle, colorize
 from gym.utils.renderer import Renderer
+from gym.envs.classic_control import *
 
 try:
     import Box2D
@@ -33,7 +34,20 @@ SIDE_ENGINE_POWER = 0.6
 
 INITIAL_RANDOM = 1000.0  # Set 1500 to make game harder
 
-LANDER_POLY = [(-14, +17), (-17, 0), (-17, -10), (+17, -10), (+17, 0), (+14, +17)] ## TODO: Change to Falcon9 Polygon shape
+### Falcon 9 Info
+R_FALCON = 17
+H_FALCON = 2*R_FALCON*5
+FALCON_POLY = [(-R_FALCON, 0), (+R_FALCON, 0), (+R_FALCON, H_FALCON), (-R_FALCON, H_FALCON)]
+L_ENGINE_X = -0.75*R_FALCON
+C_ENGINE_X = +0.00*R_FALCON
+R_ENGINE_X = +0.75*R_FALCON
+
+LANDER_POLY = [(-14, +17), (-17, 0), (-17, -10), (+17, -10), (+17, 0), (+14, +17)] 
+
+MAIN_ENGINE_POWER = 10 # 50% of 7600 kN 
+SIDE_ENGINE_POWER =  5.0 # 25% of 7600 kN
+###
+
 LEG_AWAY = 20
 LEG_DOWN = 18
 LEG_W, LEG_H = 2, 8
@@ -42,7 +56,8 @@ LEG_SPRING_TORQUE = 40
 SIDE_ENGINE_HEIGHT = 14.0
 SIDE_ENGINE_AWAY = 12.0
 
-VIEWPORT_W = 600
+# Default Window Size
+VIEWPORT_W = 600 
 VIEWPORT_H = 400
 
 
@@ -341,7 +356,7 @@ class LunarLander(gym.Env, EzPickle):
             angle=0.0,
             fixtures=fixtureDef(
                 shape=polygonShape(
-                    vertices=[(x / SCALE, y / SCALE) for x, y in LANDER_POLY]
+                    vertices=[(x / SCALE, y / SCALE) for x, y in FALCON_POLY] # Changed LANDER_POLY to FALCON_POLY
                 ),
                 density=5.0,
                 friction=0.1,
@@ -350,8 +365,8 @@ class LunarLander(gym.Env, EzPickle):
                 restitution=0.0,
             ),  # 0.99 bouncy
         )
-        self.lander.color1 = (128, 102, 230)
-        self.lander.color2 = (77, 77, 128)
+        self.lander.color1 = (242, 242, 242) # pri falcon 9 color (white)
+        self.lander.color2 = (242, 242, 242) # sec falcon 9 color (white)
         self.lander.ApplyForceToCenter(
             (
                 self.np_random.uniform(-INITIAL_RANDOM, INITIAL_RANDOM),
@@ -374,8 +389,8 @@ class LunarLander(gym.Env, EzPickle):
                 ),
             )
             leg.ground_contact = False
-            leg.color1 = (128, 102, 230)
-            leg.color2 = (77, 77, 128)
+            leg.color1 = (74, 74, 74) # leg pri color (black)
+            leg.color2 = (74, 74, 74) # leg sec color (black)
             rjd = revoluteJointDef(
                 bodyA=self.lander,
                 bodyB=leg,
@@ -428,7 +443,7 @@ class LunarLander(gym.Env, EzPickle):
             self.world.DestroyBody(self.particles.pop(0))
 
     def step(self, action):
-        # Update wind
+        # Update wind - ## TODO: Edit wind calculations
         if self.enable_wind and not (
             self.legs[0].ground_contact or self.legs[1].ground_contact
         ):
@@ -466,7 +481,7 @@ class LunarLander(gym.Env, EzPickle):
                 action
             ), f"{action!r} ({type(action)}) invalid "
 
-        # Engines
+        # Engines - ## TODO: Edit Dynamics
         tip = (math.sin(self.lander.angle), math.cos(self.lander.angle))
         side = (-tip[1], tip[0])
         dispersion = [self.np_random.uniform(-1.0, +1.0) / SCALE for _ in range(2)]
@@ -482,8 +497,8 @@ class LunarLander(gym.Env, EzPickle):
             else:
                 m_power = 1.0
             # 4 is move a bit downwards, +-2 for randomness
-            ox = tip[0] * (4 / SCALE + 2 * dispersion[0]) + side[0] * dispersion[1]
-            oy = -tip[1] * (4 / SCALE + 2 * dispersion[0]) - side[1] * dispersion[1]
+            ox = tip[0] * (R_FALCON / SCALE + 2 * dispersion[0]) + side[0] * dispersion[1] # tip[0] * (4 / SCALE + 2 * dispersion[0]) + side[0] * dispersion[1] 
+            oy = -tip[1] * (R_FALCON / SCALE + 2 * dispersion[0]) - side[1] * dispersion[1] # -tip[1] * (4 / SCALE + 2 * dispersion[0]) - side[1] * dispersion[1]
             impulse_pos = (self.lander.position[0] + ox, self.lander.position[1] + oy)
             p = self._create_particle(
                 3.5,  # 3.5 is here to make particle speed adequate
@@ -491,12 +506,12 @@ class LunarLander(gym.Env, EzPickle):
                 impulse_pos[1],
                 m_power,
             )  # particles are just a decoration
-            p.ApplyLinearImpulse(
+            p.ApplyLinearImpulse( # particle impulse
                 (ox * MAIN_ENGINE_POWER * m_power, oy * MAIN_ENGINE_POWER * m_power),
                 impulse_pos,
                 True,
             )
-            self.lander.ApplyLinearImpulse(
+            self.lander.ApplyLinearImpulse( # lander impulse
                 (-ox * MAIN_ENGINE_POWER * m_power, -oy * MAIN_ENGINE_POWER * m_power),
                 impulse_pos,
                 True,
@@ -612,7 +627,7 @@ class LunarLander(gym.Env, EzPickle):
         for obj in self.particles:
             obj.ttl -= 0.15
             obj.color1 = (
-                int(max(0.2, 0.15 + obj.ttl) * 255),
+                int(max(0.2, 0.15 + obj.ttl) * 255), # particle color
                 int(max(0.2, 0.5 * obj.ttl) * 255),
                 int(max(0.2, 0.5 * obj.ttl) * 255),
             )
@@ -660,14 +675,14 @@ class LunarLander(gym.Env, EzPickle):
                     x = x * SCALE
                     flagy1 = self.helipad_y * SCALE
                     flagy2 = flagy1 + 50
-                    pygame.draw.line(
+                    pygame.draw.line( # helipad
                         self.surf,
                         color=(255, 255, 255),
                         start_pos=(x, flagy1),
                         end_pos=(x, flagy2),
                         width=1,
                     )
-                    pygame.draw.polygon(
+                    pygame.draw.polygon( # flag
                         self.surf,
                         color=(204, 204, 0),
                         points=[
