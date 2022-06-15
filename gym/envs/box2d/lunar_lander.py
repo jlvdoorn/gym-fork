@@ -34,20 +34,6 @@ SIDE_ENGINE_POWER = 0.6
 
 INITIAL_RANDOM = 1000.0  # Set 1500 to make game harder
 
-### Falcon 9 Info
-R_FALCON = 17
-H_FALCON = 2*R_FALCON*5
-FALCON_POLY = [(-R_FALCON, 0), (+R_FALCON, 0), (+R_FALCON, H_FALCON), (-R_FALCON, H_FALCON)]
-L_ENGINE_X = -0.75*R_FALCON
-C_ENGINE_X = +0.00*R_FALCON
-R_ENGINE_X = +0.75*R_FALCON
-
-LANDER_POLY = [(-14, +17), (-17, 0), (-17, -10), (+17, -10), (+17, 0), (+14, +17)] 
-
-MAIN_ENGINE_POWER = 10 # 50% of 7600 kN 
-SIDE_ENGINE_POWER =  5.0 # 25% of 7600 kN
-###
-
 LEG_AWAY = 20
 LEG_DOWN = 18
 LEG_W, LEG_H = 2, 8
@@ -60,6 +46,22 @@ SIDE_ENGINE_AWAY = 12.0
 VIEWPORT_W = 600 
 VIEWPORT_H = 400
 
+### Falcon 9 Info
+R_FALCON = 17
+H_FALCON = 2*R_FALCON*5
+FALCON_POLY = [(-R_FALCON, 0), (+R_FALCON, 0), (+R_FALCON, H_FALCON), (-R_FALCON, H_FALCON)]
+L_ENGINE_X = -0.75*R_FALCON
+C_ENGINE_X = +0.00*R_FALCON
+R_ENGINE_X = +0.75*R_FALCON
+
+LANDER_POLY = [(-14, +17), (-17, 0), (-17, -10), (+17, -10), (+17, 0), (+14, +17)] 
+
+MAIN_ENGINE_POWER = 10 # 50% of 7600 kN 
+SIDE_ENGINE_POWER =  1.0 # 25% of 7600 kN
+
+SIDE_ENGINE_HEIGHT = 0.0;        # height from bottom to side thrusters
+SIDE_ENGINE_AWAY = 0.75*R_FALCON # distance from centerline to side thrusters
+###
 
 class ContactDetector(contactListener):
     def __init__(self, env):
@@ -353,7 +355,7 @@ class LunarLander(gym.Env, EzPickle):
         initial_y = VIEWPORT_H / SCALE
         self.lander = self.world.CreateDynamicBody( ## TODO: Edit Dynamics to new state-space system
             position=(VIEWPORT_W / SCALE / 2, initial_y),
-            angle=0.0,
+            angle=0.0, # radians - static angle of rocket
             fixtures=fixtureDef(
                 shape=polygonShape(
                     vertices=[(x / SCALE, y / SCALE) for x, y in FALCON_POLY] # Changed LANDER_POLY to FALCON_POLY
@@ -496,6 +498,7 @@ class LunarLander(gym.Env, EzPickle):
                 assert m_power >= 0.5 and m_power <= 1.0
             else:
                 m_power = 1.0
+            #### MAIN ####
             # 4 is move a bit downwards, +-2 for randomness
             ox = tip[0] * (R_FALCON / SCALE + 2 * dispersion[0]) + side[0] * dispersion[1] # tip[0] * (4 / SCALE + 2 * dispersion[0]) + side[0] * dispersion[1] 
             oy = -tip[1] * (R_FALCON / SCALE + 2 * dispersion[0]) - side[1] * dispersion[1] # -tip[1] * (4 / SCALE + 2 * dispersion[0]) - side[1] * dispersion[1]
@@ -513,7 +516,7 @@ class LunarLander(gym.Env, EzPickle):
             )
             self.lander.ApplyLinearImpulse( # lander impulse
                 (-ox * MAIN_ENGINE_POWER * m_power, -oy * MAIN_ENGINE_POWER * m_power),
-                impulse_pos,
+                (self.lander.position[0]+H_FALCON/2*tip[0]/SCALE, self.lander.position[1]+H_FALCON/2*tip[1]/SCALE), # impulse_pos,
                 True,
             )
 
@@ -529,6 +532,7 @@ class LunarLander(gym.Env, EzPickle):
             else:
                 direction = action - 2
                 s_power = 1.0
+                #### SIDE ####
             ox = tip[0] * dispersion[0] + side[0] * (
                 3 * dispersion[1] + direction * SIDE_ENGINE_AWAY / SCALE
             )
