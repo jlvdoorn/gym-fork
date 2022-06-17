@@ -49,15 +49,20 @@ VIEWPORT_H = 400
 ### Falcon 9 Info
 R_FALCON = 17
 H_FALCON = 2*R_FALCON*5
-FALCON_POLY = [(-R_FALCON, 0), (+R_FALCON, 0), (+R_FALCON, H_FALCON), (-R_FALCON, H_FALCON)]
+FALCON_POLY = [(-R_FALCON, -H_FALCON/2), (+R_FALCON, -H_FALCON/2), (+R_FALCON, H_FALCON/2), (-R_FALCON, H_FALCON/2)]
 L_ENGINE_X = -0.75*R_FALCON
 C_ENGINE_X = +0.00*R_FALCON
 R_ENGINE_X = +0.75*R_FALCON
 
 LANDER_POLY = [(-14, +17), (-17, 0), (-17, -10), (+17, -10), (+17, 0), (+14, +17)] 
 
-MAIN_ENGINE_POWER = 10 # 50% of 7600 kN 
-SIDE_ENGINE_POWER =  1.0 # 25% of 7600 kN
+LEG_W, LEG_H = 2, 10
+LEG_AWAY = 0
+LEG_DOWN = H_FALCON/2
+LEG_SPRING_TORQUE = 80
+
+MAIN_ENGINE_POWER = 10.0 # 50% of 7600 kN 
+SIDE_ENGINE_POWER =  5.0 # 25% of 7600 kN
 
 SIDE_ENGINE_HEIGHT = 0.0;        # height from bottom to side thrusters
 SIDE_ENGINE_AWAY = 0.75*R_FALCON # distance from centerline to side thrusters
@@ -445,7 +450,7 @@ class LunarLander(gym.Env, EzPickle):
             self.world.DestroyBody(self.particles.pop(0))
 
     def step(self, action):
-        # Update wind - ## TODO: Edit wind calculations
+        # Update wind
         if self.enable_wind and not (
             self.legs[0].ground_contact or self.legs[1].ground_contact
         ):
@@ -483,7 +488,7 @@ class LunarLander(gym.Env, EzPickle):
                 action
             ), f"{action!r} ({type(action)}) invalid "
 
-        # Engines - ## TODO: Edit Dynamics
+        # Engines
         tip = (math.sin(self.lander.angle), math.cos(self.lander.angle))
         side = (-tip[1], tip[0])
         dispersion = [self.np_random.uniform(-1.0, +1.0) / SCALE for _ in range(2)]
@@ -500,8 +505,8 @@ class LunarLander(gym.Env, EzPickle):
                 m_power = 1.0
             #### MAIN ####
             # 4 is move a bit downwards, +-2 for randomness
-            ox = tip[0] * (R_FALCON / SCALE + 2 * dispersion[0]) + side[0] * dispersion[1] # tip[0] * (4 / SCALE + 2 * dispersion[0]) + side[0] * dispersion[1] 
-            oy = -tip[1] * (R_FALCON / SCALE + 2 * dispersion[0]) - side[1] * dispersion[1] # -tip[1] * (4 / SCALE + 2 * dispersion[0]) - side[1] * dispersion[1]
+            ox =  H_FALCON/2*tip[0] / SCALE # tip[0] * (4 / SCALE + 2 * dispersion[0]) + side[0] * dispersion[1] 
+            oy = -H_FALCON/2*tip[1] / SCALE # -tip[1] * (4 / SCALE + 2 * dispersion[0]) - side[1] * dispersion[1]
             impulse_pos = (self.lander.position[0] + ox, self.lander.position[1] + oy)
             p = self._create_particle(
                 3.5,  # 3.5 is here to make particle speed adequate
@@ -515,8 +520,8 @@ class LunarLander(gym.Env, EzPickle):
                 True,
             )
             self.lander.ApplyLinearImpulse( # lander impulse
-                (-ox * MAIN_ENGINE_POWER * m_power, -oy * MAIN_ENGINE_POWER * m_power),
-                (self.lander.position[0]+H_FALCON/2*tip[0]/SCALE, self.lander.position[1]+H_FALCON/2*tip[1]/SCALE), # impulse_pos,
+                (-tip[0] * MAIN_ENGINE_POWER * m_power, tip[1] * MAIN_ENGINE_POWER * m_power), # impulse
+                impulse_pos, # position
                 True,
             )
 
@@ -533,15 +538,17 @@ class LunarLander(gym.Env, EzPickle):
                 direction = action - 2
                 s_power = 1.0
                 #### SIDE ####
-            ox = tip[0] * dispersion[0] + side[0] * (
-                3 * dispersion[1] + direction * SIDE_ENGINE_AWAY / SCALE
-            )
-            oy = -tip[1] * dispersion[0] - side[1] * (
-                3 * dispersion[1] + direction * SIDE_ENGINE_AWAY / SCALE
-            )
+            # ox = tip[0] * dispersion[0] + side[0] * (
+            #     3 * dispersion[1] + direction * SIDE_ENGINE_AWAY / SCALE
+            # )
+            ox = H_FALCON/2*tip[0] / SCALE + direction * 3/4*R_FALCON*tip[1] / SCALE
+            # oy = -tip[1] * dispersion[0] - side[1] * (
+            #     3 * dispersion[1] + direction * SIDE_ENGINE_AWAY / SCALE
+            # )
+            oy = -H_FALCON/2*tip[1] / SCALE + direction * 3/4*R_FALCON*tip[0] / SCALE
             impulse_pos = (
-                self.lander.position[0] + ox - tip[0] * 17 / SCALE,
-                self.lander.position[1] + oy + tip[1] * SIDE_ENGINE_HEIGHT / SCALE,
+                self.lander.position[0] + ox, # - tip[0] * 17 / SCALE,
+                self.lander.position[1] + oy, # + tip[1] * SIDE_ENGINE_HEIGHT / SCALE,
             )
             p = self._create_particle(0.7, impulse_pos[0], impulse_pos[1], s_power)
             p.ApplyLinearImpulse(
@@ -550,7 +557,7 @@ class LunarLander(gym.Env, EzPickle):
                 True,
             )
             self.lander.ApplyLinearImpulse(
-                (-ox * SIDE_ENGINE_POWER * s_power, -oy * SIDE_ENGINE_POWER * s_power),
+                (-tip[0] * SIDE_ENGINE_POWER * s_power, tip[1] * SIDE_ENGINE_POWER * s_power),
                 impulse_pos,
                 True,
             )

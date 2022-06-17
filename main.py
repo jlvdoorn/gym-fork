@@ -1,5 +1,6 @@
 import gym
 import time
+import numpy as np
 
 env = gym.make(
     "LunarLander-v2",
@@ -11,18 +12,31 @@ env = gym.make(
 )
 observation, info = env.reset(seed=42, return_info=True)
 
-def iterate(steps=1000):
+def iterate(steps=100000):
 
     for _ in range(steps):
         action = env.action_space.sample()
         observation, reward, done, info = env.step(action)
         env.render(mode='human')
+        print('t: '+str(observation[4]*180/np.pi))
+        print('x: '+str(observation[0]))
+        print('y: '+str(observation[1]))
+        if info != {}:
+            print('i: '+str(info))
 
         if done:
             observation, info = env.reset(return_info=True)
 
-    env.close()
 
+def oneStep():
+
+    action = env.action_space.sample()
+    observation, reward, done, info = env.step(action)
+    env.render(mode='human')
+    
+    if done:
+        observation, info = env.reset(return_info=True)
 
 if __name__ == "__main__":
-    iterate()
+    iterate(500)
+    #env.close()
