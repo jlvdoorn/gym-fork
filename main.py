@@ -79,15 +79,6 @@ class Sim:
 
         self.simData = simData
 
-    def oneStep(self):
-
-        action = self.env.action_space.sample()
-        observation, reward, done, info = self.env.step(action)
-        self.env.render(mode='human')
-        
-        if done:
-            observation, info = self.env.reset(return_info=True)
-
     def printSimStats(self):
         print('###################')
         print('Simulation done')
@@ -107,5 +98,6 @@ if __name__ == "__main__":
     falcon9 = Sim(10)
     falcon9.iterate()
     falcon9.printSimStats()
-    print('done')
-    #env.close()
+    falcon9.steps = 1
+    falcon9.iterate()
+    falcon9.printSimStats()
