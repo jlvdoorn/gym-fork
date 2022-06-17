@@ -89,7 +89,10 @@ def printSimStats(simData):
     print('# Episodes: '+str(len(simData)))
 
     for k in range(1,len(simData)+1):
-        print('Episode '+str(k)+': '+str(len(simData[k]['act']))+' iterations')
+        print('Episode '+str(k))
+        print(str(len(simData[k]['act']))+' iterations')
+        print(str(min(simData[k]['rwd']))+' min reward')
+        print(str(max(simData[k]['rwd']))+' max reward')
 
 
 if __name__ == "__main__":
