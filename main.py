@@ -12,21 +12,68 @@ env = gym.make(
 )
 observation, info = env.reset(seed=42, return_info=True)
 
-def iterate(steps=100000):
+def iterate(steps=1000):
 
-    for _ in range(steps):
+    simData = {}
+
+    act = {}
+    obs = {}
+    rwd = {}
+    don = {}
+    inf = {}
+
+    episode = 1
+
+    for k in range(steps):
         action = env.action_space.sample()
         observation, reward, done, info = env.step(action)
         env.render(mode='human')
+        print('--------------------------------')
+        print('#: '+str(k))
+        print('a: '+str(action))
         print('t: '+str(observation[4]*180/np.pi))
         print('x: '+str(observation[0]))
         print('y: '+str(observation[1]))
         if info != {}:
             print('i: '+str(info))
 
+        act[k] = action
+        obs[k] = observation
+        rwd[k] = reward
+        don[k] = done
+        inf[k] = info
+
         if done:
+            ep = {}
+            ep['act'] = act
+            ep['obs'] = obs
+            ep['rwd'] = rwd
+            ep['don'] = don
+            ep['inf'] = inf
+
+            simData[episode] = ep
+            
+            episode = episode + 1
+
+            act = {}
+            obs = {}
+            rwd = {}
+            don = {}
+            inf = {}
+
             observation, info = env.reset(return_info=True)
 
+        if k == steps-1: # finish current episode
+            ep = {}
+            ep['act'] = act
+            ep['obs'] = obs
+            ep['rwd'] = rwd
+            ep['don'] = don
+            ep['inf'] = inf
+
+            simData[episode] = ep
+
+    return simData
 
 def oneStep():
 
@@ -37,6 +84,16 @@ def oneStep():
     if done:
         observation, info = env.reset(return_info=True)
 
+def printSimStats(simData):
+    print('Simulation done')
+    print('# Episodes: '+str(len(simData)))
+
+    for k in range(1,len(simData)+1):
+        print('Episode '+str(k)+': '+str(len(simData[k]['act']))+' iterations')
+
+
 if __name__ == "__main__":
-    iterate(500)
+    simData = iterate(500)
+    printSimStats(simData)
+    print('done')
     #env.close()
