@@ -162,7 +162,7 @@ class DQN:
         model.add(Dense(150, input_dim=self.state_space, activation=relu))
         model.add(Dense(120, activation=relu))
         model.add(Dense(self.action_space, activation=linear))
-        model.compule(loss='mse', optimizer=Adam(lr=self.lr))
+        model.compile(loss='mse', optimizer=Adam(lr=self.lr))
         return model
 
     def remeber(self, state, action, reward, next_state, done):
