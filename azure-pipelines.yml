@@ -20,4 +20,5 @@ steps:
   displayName: 'Installing packages'
 
 - script: python main.py
+  timeoutInMinutes: 1440
   displayName: 'Running simulation...'
