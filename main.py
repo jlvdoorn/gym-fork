@@ -154,7 +154,7 @@ class DQN:
         self.epsilon_min = 0.01
         self.lr = 0.001
         self.epsilon_decay = 0.996
-        self.memory = deque(maxlen=1e6)
+        self.memory = deque(maxlen=1000000)
         self.model = self.build_model()
 
     def build_model(self):
