@@ -199,5 +199,5 @@ class DQN:
 
 if __name__ == "__main__":
     falcon9 = Sim(1000)
-    falcon9.trainDQN(400)
+    falcon9.trainDQN(5)
     falcon9.plotGraph()
