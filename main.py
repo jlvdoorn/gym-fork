@@ -114,7 +114,7 @@ class Sim:
 
             for i in range(max_steps):
                 action = agent.act(state)
-                self.env.render()
+                self.env.render(mode=None)
 
                 next_state, reward, done, _ = self.env.step(action)
                 score += reward
