@@ -165,7 +165,7 @@ class DQN:
         model.compile(loss='mse', optimizer=Adam(lr=self.lr))
         return model
 
-    def remeber(self, state, action, reward, next_state, done):
+    def remember(self, state, action, reward, next_state, done):
         self.memory.append((state,action,reward,next_state,done))
 
     def act(self, state):
