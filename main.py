@@ -131,7 +131,7 @@ class Sim:
             loss.append(score)
 
             # Average score of last 100 episodes
-            is_solved = np.mean(loss[-100])
+            is_solved = np.mean(loss[-100:])
             if is_solved > 200:
                 print('\n Task Completed! \n')
                 break
@@ -140,7 +140,7 @@ class Sim:
         return self.loss
     
     def plotGraph(self):
-        plt.plot([i+1 for i in range(0, len(self.loss), 2)], loss[::2])
+        plt.plot([i+1 for i in range(0, len(self.loss), 2)], self.loss[::2])
         plt.show()
 
 
