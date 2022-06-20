@@ -10,23 +10,15 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+- script: python main.py
+  displayName: 'Running simulation...'
 
 - script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
-  
-- script: |
-  	echo 'Installing packages.'
+    echo Installing packages...
     pip install gym[all]
     pip install numpy
     pip install matplotlib
     pip install tensorflow
     pip install keras
-  displayName: 'Install packages'
-
-- script: |
-    echo 'Training Simulation'
-    python main.py
+  displayName: 'Installing packages'
+  
