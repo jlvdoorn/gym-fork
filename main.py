@@ -201,3 +201,4 @@ if __name__ == "__main__":
     falcon9 = Sim(1000)
     falcon9.trainDQN(200) # 5 episodes take approx 1 minute
     falcon9.plotGraph()
+    print(falcon9.loss)
