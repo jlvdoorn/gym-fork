@@ -1,0 +1,35 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+
+
+- bash:
+    sudo apt-get install python3-tk
+- script:
+    pip install matplotlib
+    pip install numpy
+  displayName: 'Run a multi-line script'
+
+- bash: |
+    Xvfb :1 -screen 0 640x480x16 &
+    echo "##vso[task.setvariable variable=DISPLAY]:1.0"
+  displayName: 'Create and set virtual display'
+
+- script: 
+    import tinker
+    import matplotlib
+    import matplotlib.pyplot as plt
+    x = [1,2,3]
+    y = [5,8,2]
+
+    plt.plot(x,y)
+    plt.show()
