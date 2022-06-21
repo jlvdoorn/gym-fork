@@ -15,7 +15,6 @@ steps:
 - bash:
     sudo apt-get install python3-tk
 - script:
-    import tinker
     pip install matplotlib
     pip install numpy
   displayName: 'Run a multi-line script'
@@ -26,6 +25,7 @@ steps:
   displayName: 'Create and set virtual display'
 
 - script: 
+    import tinker
     import matplotlib
     import matplotlib.pyplot as plt
     x = [1,2,3]
