@@ -10,12 +10,21 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
-- script: |
+
+
+- bash:
+    sudo apt-get install python3-tk
+- script:
+    import tinker
     pip install matplotlib
     pip install numpy
   displayName: 'Run a multi-line script'
 
-- script: python test.py
-  displayName: 'Run a one-line script'
+- script: 
+    import matplotlib
+    import matplotlib.pyplot as plt
+    x = [1,2,3]
+    y = [5,8,2]
 
-
+    plt.plot(x,y)
+    plt.show()
