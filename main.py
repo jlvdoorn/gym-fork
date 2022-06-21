@@ -3,6 +3,7 @@ from xml.dom.xmlbuilder import DocumentLS
 import gym
 import time
 import numpy as np
+from termcolor import colored
 
 import random
 from keras import Sequential
@@ -126,7 +127,7 @@ class Sim:
                 agent.replay()
                 
                 if done:
-                    print('episode: {}/{}, score: {}'.format(e, episode, score))
+                    print(colored('episode: {}/{}, score: {}'.format(e, episode, score)),'red')
                     break
             loss.append(score)
 
@@ -143,6 +144,12 @@ class Sim:
         plt.plot([i+1 for i in range(0, len(self.loss), 2)], self.loss[::2])
         plt.show()
 
+    def writeOutput(self):
+        import csv
+        f = open('output.csv','w')
+        writer = csv.writer(f)
+        writer.writerow(self.loss)
+        f.close()
 
 class DQN:
     def __init__(self, action_space, state_space):
@@ -199,6 +206,7 @@ class DQN:
 
 if __name__ == "__main__":
     falcon9 = Sim(1000)
-    falcon9.trainDQN(100) # 5 episodes take approx 1 minute
+    falcon9.trainDQN(20) # 5 episodes take approx 1 minute
     falcon9.plotGraph()
+    falcon9.writeOutput()
     print(falcon9.loss)
