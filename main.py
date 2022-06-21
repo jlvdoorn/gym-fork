@@ -206,7 +206,7 @@ class DQN:
 
 if __name__ == "__main__":
     falcon9 = Sim(1000)
-    falcon9.trainDQN(20) # 5 episodes take approx 1 minute
+    falcon9.trainDQN(400) # 5 episodes take approx 1 minute
     falcon9.plotGraph()
     falcon9.writeOutput()
     print(falcon9.loss)
