@@ -14,8 +14,9 @@ import matplotlib.pyplot as plt
 from keras.activations import relu, linear
 
 class Sim:
-    def __init__(self, steps: int =1000):
+    def __init__(self, steps: int = 10000, mode = None):
         self.steps = steps
+        self.mode = mode
         self.env = gym.make(
             "LunarLander-v2",
             continuous = False,
@@ -41,7 +42,7 @@ class Sim:
         for k in range(self.steps):
             action = self.env.action_space.sample()
             observation, reward, done, info = self.env.step(action)
-            self.env.render(mode='human')
+            self.env.render(mode=self.mode)
             # print('--------------------------------')
             # print('#: '+str(k))
             # print('a: '+str(action))
@@ -111,11 +112,11 @@ class Sim:
             state = self.env.reset()
             state = np.reshape(state, (1, 8))
             score = 0
-            max_steps = 3000
+            max_steps = 10000
 
             for i in range(max_steps):
                 action = agent.act(state)
-                self.env.render(mode=None)
+                self.env.render(mode=self.mode)
 
                 next_state, reward, done, _ = self.env.step(action)
                 score += reward
@@ -205,8 +206,8 @@ class DQN:
             self.epsilon *= self.epsilon_decay
 
 if __name__ == "__main__":
-    falcon9 = Sim(1000)
-    falcon9.trainDQN(400) # 5 episodes take approx 1 minute
+    falcon9 = Sim(10000, None)
+    falcon9.trainDQN(1000)
     falcon9.plotGraph()
     falcon9.writeOutput()
     print(falcon9.loss)

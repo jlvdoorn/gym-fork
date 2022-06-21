@@ -5,6 +5,9 @@
 .cache
 .pytest_cache/
 
+*.csv
+./test.py
+
 # Setuptools distribution and build folders.
 /dist/
 /build

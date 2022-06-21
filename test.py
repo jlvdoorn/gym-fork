@@ -3,5 +3,10 @@ import numpy as np
 
 x = [0, 1, 2, 3, 4, 5]
 y = [0, 2, 9, 10, 6, 3]
-plt.plot(x,y)
-plt.show()
+x.append(10)
+
+import csv
+f = open('test.csv','w')
+writer = csv.writer(f)
+writer.writerow(x)
+f.close()
