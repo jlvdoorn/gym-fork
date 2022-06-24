@@ -357,7 +357,7 @@ class LunarLander(gym.Env, EzPickle):
         self.moon.color2 = (0.0, 0.0, 0.0)
 
         initial_y = VIEWPORT_H / SCALE
-        self.lander = self.world.CreateDynamicBody( ## TODO: Edit Dynamics to new state-space system
+        self.lander = self.world.CreateDynamicBody(
             position=(VIEWPORT_W / SCALE / 2, initial_y),
             angle=0.0, # radians - static angle of rocket
             fixtures=fixtureDef(
@@ -507,17 +507,17 @@ class LunarLander(gym.Env, EzPickle):
             ox =  H_FALCON/2*tip[0] / SCALE # tip[0] * (4 / SCALE + 2 * dispersion[0]) + side[0] * dispersion[1] 
             oy = -H_FALCON/2*tip[1] / SCALE # -tip[1] * (4 / SCALE + 2 * dispersion[0]) - side[1] * dispersion[1]
             impulse_pos = (self.lander.position[0] + ox, self.lander.position[1] + oy)
-            # p = self._create_particle(
-            #     3.5,  # 3.5 is here to make particle speed adequate
-            #     impulse_pos[0],
-            #     impulse_pos[1],
-            #     m_power,
-            # )  # particles are just a decoration
-            # p.ApplyLinearImpulse( # particle impulse
-            #     (ox * MAIN_ENGINE_POWER * m_power, oy * MAIN_ENGINE_POWER * m_power),
-            #     impulse_pos,
-            #     True,
-            # )
+            p = self._create_particle(
+                3.5,  # 3.5 is here to make particle speed adequate
+                impulse_pos[0],
+                impulse_pos[1],
+                m_power,
+            )  # particles are just a decoration
+            p.ApplyLinearImpulse( # particle impulse
+                (ox * MAIN_ENGINE_POWER * m_power, oy * MAIN_ENGINE_POWER * m_power),
+                impulse_pos,
+                True,
+            )
             self.lander.ApplyLinearImpulse( # lander impulse
                 (-tip[0] * MAIN_ENGINE_POWER * m_power, tip[1] * MAIN_ENGINE_POWER * m_power), # impulse
                 impulse_pos, # position
@@ -549,17 +549,17 @@ class LunarLander(gym.Env, EzPickle):
                 self.lander.position[0] + ox, # - tip[0] * 17 / SCALE,
                 self.lander.position[1] + oy, # + tip[1] * SIDE_ENGINE_HEIGHT / SCALE,
             )
-            # p = self._create_particle(0.7, impulse_pos[0], impulse_pos[1], s_power)
-            # p.ApplyLinearImpulse(
-            #     (ox * SIDE_ENGINE_POWER * s_power, oy * SIDE_ENGINE_POWER * s_power),
-            #     impulse_pos,
-            #     True,
-            # )
-            # self.lander.ApplyLinearImpulse(
-            #     (-tip[0] * SIDE_ENGINE_POWER * s_power, tip[1] * SIDE_ENGINE_POWER * s_power),
-            #     impulse_pos,
-            #     True,
-            # )
+            p = self._create_particle(0.7, impulse_pos[0], impulse_pos[1], s_power)
+            p.ApplyLinearImpulse(
+                (ox * SIDE_ENGINE_POWER * s_power, oy * SIDE_ENGINE_POWER * s_power),
+                impulse_pos,
+                True,
+            )
+            self.lander.ApplyLinearImpulse(
+                (-tip[0] * SIDE_ENGINE_POWER * s_power, tip[1] * SIDE_ENGINE_POWER * s_power),
+                impulse_pos,
+                True,
+            )
 
         self.world.Step(1.0 / FPS, 6 * 30, 2 * 30)
 

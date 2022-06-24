@@ -208,7 +208,7 @@ class DQN:
 
 if __name__ == "__main__":
     # 400 episodes of max 7000 steps
-    falcon9 = Sim(7000, None, 7000)
+    falcon9 = Sim(10000, 'human', 10000)
     falcon9.trainDQN(400)
     falcon9.plotGraph()
     falcon9.writeOutput()
