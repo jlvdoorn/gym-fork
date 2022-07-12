@@ -8,7 +8,7 @@ In this fork, the original lunar lander environment is adapted such that it mode
 
 ## Usage
 
-By running ```main.py``` the simulation will start. In the beginning the rocket will try to land itself but fail and after a given amount of episodes (tries) the rocket will be able to land itself perfectly in the center of the designated area. Afterwards, it will produce a graph of the total reward obtained for each of the episodes, there the learning curve will be visible clearly.
+By running ```main.py``` the simulation will start. In the beginning the rocket will try to land itself but fail and after a given amount of episodes (tries) the rocket will be able to land itself perfectly in the center of the designated area. Afterwards, it will produce a graph of the total reward obtained for each of the episodes, there the learning curve will be visible clearly. Also, this data will be written to a file called ```output.csv```
 
 ## Results
 No training
