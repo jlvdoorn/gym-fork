@@ -14,10 +14,13 @@ By running ```main.py``` the simulation will start. In the beginning the rocket 
 
 ## Results
 No training
+
 ![no_training](https://media0.giphy.com/media/bAM0xaTvbn9OZl3bzf/giphy.gif?cid=790b761150b61c1125b475c5a37be0164ff2641cbc911f29&rid=giphy.gif&ct=g)
 
 Mid training
+
 ![mid_training](https://media1.giphy.com/media/uf9QucTxSUJ8dbT17O/giphy.gif?cid=790b7611ebc8369589f220be1947b76af1711ec44e0329df&rid=giphy.gif&ct=g)
 
 After training (100 episodes of max 100k steps)
+
 ![after_training](https://media0.giphy.com/media/E5pLGIYpib2Etwhkhg/giphy.gif?cid=790b7611d78b7b504cec730df5c4056c90efb8e0d3075ef6&rid=giphy.gif&ct=g)
