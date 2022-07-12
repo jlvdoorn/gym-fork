@@ -1,5 +1,3 @@
-[![CI](https://github.com/jlvdoorn/gym-fork/actions/workflows/main.yml/badge.svg)](https://github.com/jlvdoorn/gym-fork/actions/workflows/main.yml)
-
 ## Gym-Fork
 
 This is a fork of the OpenAI Gym library, for more info see [https://www.gymlibrary.ml/](https://www.gymlibrary.ml/).
