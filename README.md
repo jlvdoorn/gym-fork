@@ -71,3 +71,5 @@ There used to be release notes for all the new Gym versions here. New release no
 
 ## Results
 ![no_training](https://i.imgur.com/iX8lRw5.gif)
+![mid_training](https://i.imgur.com/Wijrk6W.mp4)
+![after_training](https://i.imgur.com/FUGeegh.gif)
