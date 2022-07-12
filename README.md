@@ -71,5 +71,5 @@ There used to be release notes for all the new Gym versions here. New release no
 
 ## Results
 ![no_training](https://media0.giphy.com/media/bAM0xaTvbn9OZl3bzf/giphy.gif?cid=790b761150b61c1125b475c5a37be0164ff2641cbc911f29&rid=giphy.gif&ct=g)
-![mid_training](https://i.imgur.com/Wijrk6W.mp4)
+![mid_training](https://media1.giphy.com/media/uf9QucTxSUJ8dbT17O/giphy.gif?cid=790b7611ebc8369589f220be1947b76af1711ec44e0329df&rid=giphy.gif&ct=g)
 ![after_training](https://media0.giphy.com/media/E5pLGIYpib2Etwhkhg/giphy.gif?cid=790b7611d78b7b504cec730df5c4056c90efb8e0d3075ef6&rid=giphy.gif&ct=g)
